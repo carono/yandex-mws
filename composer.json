@@ -1,0 +1,19 @@
+{
+  "name": "carono/yandex-mws",
+  "description": "",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Aleksandr Kasyanov",
+      "email": "info@carono.ru",
+      "homepage": "http://carono.ru"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "carono\\yandex\\": "src"
+    }
+  },
+  "require": {}
+}

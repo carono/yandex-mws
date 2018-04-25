@@ -1,0 +1,6 @@
+.idea
+vendor
+lib/private.key
+lib/shop.cer
+yandex.log
+composer.lock
