@@ -4,7 +4,7 @@ namespace carono\yandex;
 
 class Log
 {
-    private $log_file = 'yandex.log';
+    public $log_file = 'yandex.log';
 
     public function info($str)
     {
