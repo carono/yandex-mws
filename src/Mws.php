@@ -253,6 +253,34 @@ class Mws
         return $this->sendRequest($paymentMethod, http_build_query($data), 'x-www-form-urlencoded');
     }
 
+    /**
+     * Автоплатеж
+     *
+     * @param  string|int $invoiceId transaction number of the transfer being confirmed
+     * @param  string $destination Номер кошелька или идентифицированного счета, полученный при привязке карты Исполнителя.
+     * @param  string $cardSynonym cardSynonym    xs:string    Синоним карты, полученный при привязке карты Исполнителя.
+     * @param  string $amount amount to transfer
+     * @return string response from Yandex.Money in XML format
+     */
+    public function confirmDeposition($invoiceId, $destination, $cardSynonym, $amount)
+    {
+        $methodName = 'confirmDeposition';
+        $requestParams = [
+            'clientOrderId' => time(),
+            'requestDT' => Utils::formatDate(new \DateTime()),
+            'invoiceId' => $invoiceId,
+            'destination' => $destination,
+            'cardSynonym' => $cardSynonym,
+            'amount' => $amount,
+            'currency' => 'RUB',
+            'offerAccepted' => true,
+        ];
+        return $this->sendUrlEncodedRequest($methodName, $requestParams);
+    }
+
+    /**
+     * @return string
+     */
     protected function getHost()
     {
         if ($this->host) {
@@ -263,7 +291,7 @@ class Mws
             return 'https://penelope-demo.yamoney.ru:8083';
         }
 
-        return '';
+        return 'https://penelope.yamoney.ru';
     }
 
     /**
