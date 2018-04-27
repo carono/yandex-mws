@@ -343,7 +343,6 @@ class Mws
             CURLOPT_VERBOSE => 1,
             CURLOPT_POSTFIELDS => $requestBody
         ];
-        echo rtrim($this->getHost(), '/') . '/webservice/mws/api/' . $paymentMethod;
         curl_setopt_array($curl, $params);
         $result = null;
         try {
