@@ -257,12 +257,11 @@ class Mws
      * Автоплатеж
      *
      * @param  string|int $invoiceId transaction number of the transfer being confirmed
-     * @param  string $destination Номер кошелька или идентифицированного счета, полученный при привязке карты Исполнителя.
-     * @param  string $cardSynonym cardSynonym    xs:string    Синоним карты, полученный при привязке карты Исполнителя.
+     * @param  string $destination Номер кошелька
      * @param  string $amount amount to transfer
      * @return string response from Yandex.Money in XML format
      */
-    public function confirmDeposition($invoiceId, $destination, $cardSynonym, $amount)
+    public function confirmDepositionByWallet($invoiceId, $amount, $destination)
     {
         $methodName = 'confirmDeposition';
         $requestParams = [
@@ -270,12 +269,36 @@ class Mws
             'requestDT' => Utils::formatDate(new \DateTime()),
             'invoiceId' => $invoiceId,
             'destination' => $destination,
-            'cardSynonym' => $cardSynonym,
             'amount' => $amount,
-            'currency' => 'RUB',
+            'currency' => $this->currency,
             'offerAccepted' => true,
         ];
-        return $this->sendUrlEncodedRequest($methodName, $requestParams);
+        return $this->sendUrlEncodedRequest($methodName, array_filter($requestParams));
+    }
+
+    /**
+     * Автоплатеж
+     *
+     * @param  string|int $invoiceId transaction number of the transfer being confirmed
+     * @param  string $accountNumber Номер идентифицированного счета, полученный при привязке карты Исполнителя.
+     * @param  string $cardSynonym cardSynonym    xs:string    Синоним карты, полученный при привязке карты Исполнителя.
+     * @param  string $amount amount to transfer
+     * @return string response from Yandex.Money in XML format
+     */
+    public function confirmDepositionByCard($invoiceId, $amount, $accountNumber, $cardSynonym)
+    {
+        $methodName = 'confirmDeposition';
+        $requestParams = [
+            'clientOrderId' => time(),
+            'requestDT' => Utils::formatDate(new \DateTime()),
+            'invoiceId' => $invoiceId,
+            'destination' => $accountNumber,
+            'cardSynonym' => $cardSynonym,
+            'amount' => $amount,
+            'currency' => $this->currency,
+            'offerAccepted' => true,
+        ];
+        return $this->sendUrlEncodedRequest($methodName, array_filter($requestParams));
     }
 
     /**
@@ -304,6 +327,7 @@ class Mws
      */
     private function sendRequest($paymentMethod, $requestBody, $contentType)
     {
+
         $this->log->info($paymentMethod . ' Request: ' . $requestBody);
 
         $curl = curl_init();
@@ -319,6 +343,7 @@ class Mws
             CURLOPT_VERBOSE => 1,
             CURLOPT_POSTFIELDS => $requestBody
         ];
+        echo rtrim($this->getHost(), '/') . '/webservice/mws/api/' . $paymentMethod;
         curl_setopt_array($curl, $params);
         $result = null;
         try {
